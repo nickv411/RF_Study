@@ -46,3 +46,39 @@ Knowing the phase of the reflected wave and the height of the antenna, you can t
 You can determine the intensity of the combination of the two antennas by merely adding up the signals for each elevation and azimuth angle. You can also use tools such as EZNEC for this.
 
 ### Dipole over typical ground
+
+The elevation pattern of an antenna near the Earth is quite different from one far removed from the Earth. This is due to the reflections from the Earth. For a horizontal antenna at the 1/2 wavelength above ground the reflection will be out of phase to start with. So 1/2 wavelength off ground gives a phase reversal at the reflection, and one more 1/2 wavelength up towards the antenna results in an out-of-phase signal that cancels the upward going wave. Note that the wave along the horizon cancels with the out of phase reflected wave, resulting in no radiation at 0* elevation.
+
+### Where does the power go?
+
+The areas with the most signal have a significantly stronger signal than they had in the free-space case because the other areas have a significantly weaker signal. This effect is referred to as *ground reflection gain* (I need to google some youtube videos of this...). It isn't a real gain, like from an amplifier, but more of a redistribution. On the other hand, if you want the signal to go where the signal combined with it's ground reflection goes, it seems just like an amplifier to a distance receiver. 
+
+By tending to cancel the upward and horizontal signals, the maximum signal in the main beam (coming perpendicular from the antenna) is about 5.5dB stronger than the free-space case. This is an advantage if that is the direction you want the signal to go.
+
+### What about a better ground?
+
+Perfect ground is hard to come by (they used an example of a ground with flat gold foil), but saltwater is a close approximation. It is also possible to use a large expanse of bonded wire mesh or similar structures to similar almost perfect ground.
+
+### What happens at different heights?
+
+The elevation pattern of a horizontal antenna is very dependent upon the height above ground. If the antenna is much lower than λ/2, a horizontal antenna will not have the upward direction energy cancelled, with the result that most of the energy heads upward. For example, a λ/4 high dipole has a strong signal directly up (good diagram on page 3-5, figure 3-8). Low antennas can work well for medium distance communications.
+
+As the height over ground increases, the patterns for horizontally polarized antennas tend to get more complex, and you get an increased number of elevation angles with nulls. As the antenna height increases, the first radiation peak moves down to lower angles and each peak covers a narrow range of elevation before the next null. This results in gaps in elevation angle coverage. 
+
+In regards to azimuth patterns, not much changes as the antenna height changes. 
+
+### How about vertically polarized antennas?
+
+The geometry is the same, but the big difference is that the signal is in the same phase as that from the antenna. This means that the signals add towards the horizon for perfect ground rather than null at 0 degrees of elevation. This means the vertically polarized antenna will have the strongest signal at 0 degrees elevation. As you increase the height, you can get some stronger signals pushed out (though still strongest at 0*), which is due to a reduced loss to ground interference.
+
+Unlike the horizontal dipole, the vertical dipole radiates equally well at all azimuth angles, often an advantage for some types of systems such as broadcast of mobile radio. The effects of ground reflections are also apparent for vertical antennas as they are elevated. Elevating a vertical dipole well above lossy soil has a strong effect on the strength of signals launched from that antenna (increases them).
+
+## Review Questions
+
+### 3.1: Calculate the actual height of an antenna λ/2 above the ground for frequencies of 1, 10, and 100MHz
+
+### 3.2: Compare figures 3-7 and 3-8 and consider why less-than-perfect ground may still be fine for horizontally polarized antennas. Under what conditions would perfect ground help you?
+
+### 3.3: Repeat question 3.2 for vertically polarized antennas. Compare figures 3-10 and 3-12 to get the idea. Why might you want to take extra care to simulate a perfect ground for a low vertical dipole?
+
+### 3.4: Based on their azimuth and elevation patterns, can you think of applications that would be best suited for vertical antennas? How about horizontal antennas?

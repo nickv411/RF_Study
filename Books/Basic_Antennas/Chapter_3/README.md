@@ -77,8 +77,39 @@ Unlike the horizontal dipole, the vertical dipole radiates equally well at all a
 
 ### 3.1: Calculate the actual height of an antenna λ/2 above the ground for frequencies of 1, 10, and 100MHz
 
+1MHz: λ = 300,000,000m/s (C) / 1,000,000 (Hz) = 300m, so λ/2 = 150m 
+
+10MHz: λ = 30m, so λ/2 height is 15m
+
+100MHz: λ = 3m, so λ/2 height is 1.5m
+
 ### 3.2: Compare figures 3-7 and 3-8 and consider why less-than-perfect ground may still be fine for horizontally polarized antennas. Under what conditions would perfect ground help you?
+
+Looking at figure 3-7, we can see that the loss caused by the ground actually smooths out the signal (and permits some signal to go straight up, where perfect ground would not). This causes a pattern that does not have a null at 90*. The signal will however overall be slightly weaker.
+
+The advantage of perfect ground would be if you have strong constructive interference (in phase reflections) which compound to give you the same behavior as if you had an amplifier in the system. This is more ideal for long range HF comms, and can be used in things like ionospheric skipping. The energy gets concentrated into narrow lobes with stronger signal in specific directions, but weaker otherwise.
+
+Below is a chart showing how height impacts behavior in a horizontal dipole. 
+
+| Height above ground | Main radiation angle | Behavior             | Use case                       |
+| ------------------- | -------------------- | -------------------- | ------------------------------ |
+| **0.1 λ**           | ~90° (straight up)   | Very high-angle      | **NVIS (0–300 mi)**            |
+| **0.25 λ**          | ~60–90°              | High-angle dominant  | **Regional (0–600 mi)**        |
+| **0.5 λ**           | ~30–60°              | Mid-angle            | **Medium range (500–1500 mi)** |
+| **1 λ**             | ~15–30°              | Low-angle lobes form | **Long distance (DX)**         |
+| **>1 λ**            | Multiple lobes       | Very directional     | **Advanced / directional HF**  |
+
+Below is the elevation chart of the 2λ high horizontal dipole, showing the very directional lobes as described in the above table.
+![2λ high horizontal dipole](img_6.png)
 
 ### 3.3: Repeat question 3.2 for vertically polarized antennas. Compare figures 3-10 and 3-12 to get the idea. Why might you want to take extra care to simulate a perfect ground for a low vertical dipole?
 
+With a vertically polarized antenna, the ground losses can significantly reduce the overall signal strength when compared to perfect ground.
+
+A vertical dipole is effectively have a monopole antenna, using the ground as the other half. With poor ground, you will have increased resistance and losses so power is lost as heat to the soil and absorbed signal into the soil, resulting in a weaker signal with lower transmitted power.
+
+Low vertical antennas couple strongly to the ground and push more current into the Earth, making the ground quality more important. 
+
 ### 3.4: Based on their azimuth and elevation patterns, can you think of applications that would be best suited for vertical antennas? How about horizontal antennas?
+
+Based on the low angle radiation pattern for vertical antennas the best use cases seem like they would be longer range ground communications. Things like cell towers, radio towers, etc. In contrast, horizontal antennas would probably be more aligned to communicating with things outside the atmosphere/in space, like trying to communicate with the ISS, since we would see a stronger signal at a 90* elevation (depending on height).

@@ -24,3 +24,4 @@ The open wire line shows consists of two parallel wires with air dielectric and 
 
 ## Propagation Velocity
 
+e

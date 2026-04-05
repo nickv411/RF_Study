@@ -67,9 +67,9 @@ blocks:
     orient: QtCore.Qt.Horizontal
     rangeType: float
     start: 460e6
-    step: '0.0125'
+    step: 0.125e6
     stop: 475e6
-    value: 461.919e6
+    value: 462.275e6
     widget: counter_slider
   states:
     bus_sink: false
@@ -117,26 +117,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [1168, 240.0]
-    rotation: 0
-    state: true
-- name: freq_xlating_fir_filter_xxx_0
-  id: freq_xlating_fir_filter_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    center_freq: -81e3
-    comment: ''
-    decim: '5'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: samp_rate
-    taps: firdes.low_pass(1, samp_rate, 12e3, 4e3)
-    type: ccc
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [536, 460.0]
     rotation: 0
     state: true
 - name: low_pass_filter_0
@@ -517,7 +497,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [240, 188.0]
+    coordinate: [120, 188.0]
     rotation: 0
     state: true
 - name: qtgui_freq_sink_x_0
@@ -665,11 +645,10 @@ blocks:
 
 connections:
 - [analog_nbfm_rx_0, '0', blocks_wavfile_sink_0, '0']
-- [freq_xlating_fir_filter_xxx_0, '0', low_pass_filter_0, '0']
 - [low_pass_filter_0, '0', analog_nbfm_rx_0, '0']
 - [low_pass_filter_0, '0', qtgui_freq_sink_x_0, '0']
 - [low_pass_filter_0, '0', qtgui_waterfall_sink_x_0, '0']
-- [osmosdr_source_0, '0', freq_xlating_fir_filter_xxx_0, '0']
+- [osmosdr_source_0, '0', low_pass_filter_0, '0']
 
 metadata:
   file_format: 1

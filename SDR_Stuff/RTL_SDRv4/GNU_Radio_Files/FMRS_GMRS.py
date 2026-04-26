@@ -25,6 +25,9 @@ from PyQt5 import Qt
 from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
+from gnuradio import analog
+from gnuradio import blocks
+from gnuradio import filter
 from gnuradio import gr
 from gnuradio.fft import window
 import sys
@@ -77,16 +80,52 @@ class FMRS_GMRS(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.variable_freq = variable_freq = 89.1e6
-        self.samp_rate = samp_rate = 1e7
+        self.variable_freq = variable_freq = 462.300e6
+        self.samp_rate = samp_rate = 2.4e5
         self.freq = freq = 89.1e6
 
         ##################################################
         # Blocks
         ##################################################
-        self._variable_freq_range = Range(85e6, 110e6, 0.1e6, 89.1e6, 200)
+        self._variable_freq_range = Range(460e6, 475e6, 0.025e6, 462.300e6, 200)
         self._variable_freq_win = RangeWidget(self._variable_freq_range, self.set_variable_freq, "'variable_freq'", "counter_slider", float, QtCore.Qt.Horizontal)
         self.top_layout.addWidget(self._variable_freq_win)
+        self.qtgui_waterfall_sink_x_1 = qtgui.waterfall_sink_f(
+            1024, #size
+            window.WIN_BLACKMAN_hARRIS, #wintype
+            0, #fc
+            48000, #bw
+            "", #name
+            1, #number of inputs
+            None # parent
+        )
+        self.qtgui_waterfall_sink_x_1.set_update_time(0.10)
+        self.qtgui_waterfall_sink_x_1.enable_grid(False)
+        self.qtgui_waterfall_sink_x_1.enable_axis_labels(True)
+
+
+        self.qtgui_waterfall_sink_x_1.set_plot_pos_half(not True)
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        colors = [0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+
+        for i in range(1):
+            if len(labels[i]) == 0:
+                self.qtgui_waterfall_sink_x_1.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_waterfall_sink_x_1.set_line_label(i, labels[i])
+            self.qtgui_waterfall_sink_x_1.set_color_map(i, colors[i])
+            self.qtgui_waterfall_sink_x_1.set_line_alpha(i, alphas[i])
+
+        self.qtgui_waterfall_sink_x_1.set_intensity_range(-140, 10)
+
+        self._qtgui_waterfall_sink_x_1_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_1.qwidget(), Qt.QWidget)
+
+        self.top_layout.addWidget(self._qtgui_waterfall_sink_x_1_win)
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
             1024, #size
             window.WIN_BLACKMAN_hARRIS, #wintype
@@ -122,11 +161,11 @@ class FMRS_GMRS(gr.top_block, Qt.QWidget):
         self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.qwidget(), Qt.QWidget)
 
         self.top_layout.addWidget(self._qtgui_waterfall_sink_x_0_win)
-        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
+        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_f(
             1024, #size
             window.WIN_BLACKMAN_hARRIS, #wintype
-            variable_freq, #fc
-            samp_rate, #bw
+            0, #fc
+            48000, #bw
             "", #name
             1,
             None # parent
@@ -143,6 +182,7 @@ class FMRS_GMRS(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0.set_fft_window_normalized(False)
 
 
+        self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
 
         labels = ['', '', '', '', '',
             '', '', '', '', '']
@@ -175,18 +215,49 @@ class FMRS_GMRS(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_dc_offset_mode(2, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
         self.osmosdr_source_0.set_gain_mode(False, 0)
-        self.osmosdr_source_0.set_gain(30, 0)
+        self.osmosdr_source_0.set_gain(15, 0)
         self.osmosdr_source_0.set_if_gain(20, 0)
         self.osmosdr_source_0.set_bb_gain(20, 0)
         self.osmosdr_source_0.set_antenna('', 0)
         self.osmosdr_source_0.set_bandwidth(0, 0)
+        self.high_pass_filter_0 = filter.fir_filter_fff(
+            1,
+            firdes.high_pass(
+                1,
+                48000,
+                300,
+                25,
+                window.WIN_HAMMING,
+                6.76))
+        self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(1, firdes.low_pass(1.0, samp_rate, 12000, 4000, window.WIN_HAMMING, 6.76), -25e3, samp_rate)
+        self.blocks_wavfile_sink_0 = blocks.wavfile_sink(
+            'walkie.wav',
+            1,
+            48000,
+            blocks.FORMAT_WAV,
+            blocks.FORMAT_PCM_16,
+            False
+            )
+        self.analog_pwr_squelch_xx_0 = analog.pwr_squelch_ff(-50, 1e-4, 1, True)
+        self.analog_nbfm_rx_0 = analog.nbfm_rx(
+        	audio_rate=48000,
+        	quad_rate=240000,
+        	tau=75e-6,
+        	max_dev=5e3,
+          )
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.osmosdr_source_0, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.osmosdr_source_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.analog_nbfm_rx_0, 0), (self.high_pass_filter_0, 0))
+        self.connect((self.analog_pwr_squelch_xx_0, 0), (self.blocks_wavfile_sink_0, 0))
+        self.connect((self.analog_pwr_squelch_xx_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.analog_pwr_squelch_xx_0, 0), (self.qtgui_waterfall_sink_x_1, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.analog_nbfm_rx_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.high_pass_filter_0, 0), (self.analog_pwr_squelch_xx_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
 
 
     def closeEvent(self, event):
@@ -203,7 +274,6 @@ class FMRS_GMRS(gr.top_block, Qt.QWidget):
     def set_variable_freq(self, variable_freq):
         self.variable_freq = variable_freq
         self.osmosdr_source_0.set_center_freq(self.variable_freq, 0)
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.variable_freq, self.samp_rate)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.variable_freq, self.samp_rate)
 
     def get_samp_rate(self):
@@ -211,8 +281,8 @@ class FMRS_GMRS(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.freq_xlating_fir_filter_xxx_0.set_taps(firdes.low_pass(1.0, self.samp_rate, 12000, 4000, window.WIN_HAMMING, 6.76))
         self.osmosdr_source_0.set_sample_rate(self.samp_rate)
-        self.qtgui_freq_sink_x_0.set_frequency_range(self.variable_freq, self.samp_rate)
         self.qtgui_waterfall_sink_x_0.set_frequency_range(self.variable_freq, self.samp_rate)
 
     def get_freq(self):
